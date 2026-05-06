@@ -141,11 +141,6 @@ gdi32.lib
     <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StaticLib1\StaticLib1.vcxproj">
-      <Project>{0c4c0393-de1f-4908-bfb0-668f9f5648a3}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="utils.h" />
