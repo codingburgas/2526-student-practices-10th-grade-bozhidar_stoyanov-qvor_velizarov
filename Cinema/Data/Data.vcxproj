@@ -135,11 +135,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Cinema.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Hall.h" />
     <ClInclude Include="Movie.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Seat.h" />
+    <ClInclude Include="Show.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data.cpp" />
