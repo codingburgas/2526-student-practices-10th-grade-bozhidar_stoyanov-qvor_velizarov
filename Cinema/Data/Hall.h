@@ -6,10 +6,15 @@ using namespace std;
 #define ROWS 6
 #define COLS 10
 
-struct Hall {
+class Hall {
+public:
     int id;
     string name;
     Seat seats[ROWS][COLS];
+
+    Hall() {
+        id = 0;
+    }
 
     void Init() {
         for (int r = 0; r < ROWS; r++) {

@@ -11,11 +11,19 @@ enum class SeatStatus {
     BOOKED
 };
 
-struct Seat {
+class Seat {
+public:
     int row;
     int col;
     SeatType type;
-    SeatStatus status = SeatStatus::AVAILABLE;
+    SeatStatus status;
+
+    Seat() {
+        row = 0;
+        col = 0;
+        type = SeatType::SILVER;
+        status = SeatStatus::AVAILABLE;
+    }
 
     float GetPrice() const {
         if (type == SeatType::SILVER)   return 8.0f;

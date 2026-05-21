@@ -4,9 +4,17 @@
 #include "Hall.h"
 using namespace std;
 
-struct Cinema {
+class Cinema {
+public:
     int id;
     string name;
     string city;
     vector<Hall> halls;
+
+    Cinema() {}
+    Cinema(int id, string name, string city) {
+        this->id = id;
+        this->name = name;
+        this->city = city;
+    }
 };

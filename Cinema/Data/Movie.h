@@ -15,11 +15,23 @@ enum class Language {
     BULGARIAN
 };
 
-struct Movie {
+class Movie {
+public:
     int id;
     string title;
     Genre genre;
     Language language;
     string releaseDate;
     string description;
+
+    Movie() {}
+    Movie(int id, string title, Genre genre, Language language,
+        string releaseDate, string description) {
+        this->id = id;
+        this->title = title;
+        this->genre = genre;
+        this->language = language;
+        this->releaseDate = releaseDate;
+        this->description = description;
+    }
 };
