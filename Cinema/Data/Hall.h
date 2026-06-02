@@ -23,8 +23,8 @@ public:
                 seats[r][c].col = c;
                 seats[r][c].status = SeatStatus::AVAILABLE;
 
-                if (r < 2)      seats[r][c].type = SeatType::SILVER;
-                else if (r < 4) seats[r][c].type = SeatType::GOLD;
+                if (r < 2)      seats[r][c].type = SeatType::STANDARD;
+                else if (r < 4) seats[r][c].type = SeatType::VIP;
                 else            seats[r][c].type = SeatType::PLATINUM;
             }
         }

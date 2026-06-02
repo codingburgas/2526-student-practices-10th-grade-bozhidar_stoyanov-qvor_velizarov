@@ -1,8 +1,8 @@
 #pragma once
 
 enum class SeatType {
-    SILVER,
-    GOLD,
+    STANDARD,
+    VIP,
     PLATINUM
 };
 
@@ -21,13 +21,13 @@ public:
     Seat() {
         row = 0;
         col = 0;
-        type = SeatType::SILVER;
+        type = SeatType::STANDARD;
         status = SeatStatus::AVAILABLE;
     }
 
     float GetPrice() const {
-        if (type == SeatType::SILVER)   return 8.0f;
-        if (type == SeatType::GOLD)     return 12.0f;
+        if (type == SeatType::STANDARD)   return 8.0f;
+        if (type == SeatType::VIP)     return 12.0f;
         if (type == SeatType::PLATINUM) return 18.0f;
         return 0.0f;
     }
