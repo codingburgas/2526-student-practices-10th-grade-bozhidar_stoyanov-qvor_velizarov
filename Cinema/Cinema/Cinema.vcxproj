@@ -136,12 +136,14 @@ gdi32.lib
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MoviesScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MoviesScreen.h" />
