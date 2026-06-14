@@ -141,6 +141,8 @@ gdi32.lib
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MoviesScreen.cpp" />
+    <ClCompile Include="Showscreen.cpp" />
+    <ClCompile Include="ShowsScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
