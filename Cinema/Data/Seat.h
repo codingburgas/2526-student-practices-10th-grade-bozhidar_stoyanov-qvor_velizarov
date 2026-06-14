@@ -26,9 +26,9 @@ public:
     }
 
     float GetPrice() const {
-        if (type == SeatType::STANDARD)   return 8.0f;
-        if (type == SeatType::VIP)     return 12.0f;
-        if (type == SeatType::PLATINUM) return 18.0f;
+        if (type == SeatType::STANDARD)  return 8.0f;
+        if (type == SeatType::VIP)       return 12.0f;
+        if (type == SeatType::PLATINUM)  return 18.0f;
         return 0.0f;
     }
 };
