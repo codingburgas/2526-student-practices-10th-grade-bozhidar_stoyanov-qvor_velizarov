@@ -137,6 +137,7 @@ gdi32.lib
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="BookingScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Menu.cpp" />

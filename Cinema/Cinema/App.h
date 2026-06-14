@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "MoviesScreen.h"
 #include "ShowsScreen.h"
+#include "BookingScreen.h"
 #include "..\Data\DataManager.h"
 
 class App {
@@ -15,5 +16,6 @@ private:
     DataManager db;
     Menu menu;
     MoviesScreen moviesScreen;
-    ShowsScreen showsScreen;
+    ShowsScreen  showsScreen;
+    BookingScreen bookingScreen;
 };
