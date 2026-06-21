@@ -146,6 +146,7 @@ gdi32.lib
     <ClCompile Include="ShowsScreen.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdminScreen.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="BookingScreen.h" />
     <ClInclude Include="Button.h" />

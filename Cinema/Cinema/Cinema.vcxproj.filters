@@ -59,5 +59,8 @@
     <ClInclude Include="BookingScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AdminScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
