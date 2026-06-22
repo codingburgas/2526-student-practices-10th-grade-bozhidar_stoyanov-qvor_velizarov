@@ -136,6 +136,7 @@ gdi32.lib
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AdminScreen.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="BookingScreen.cpp" />
     <ClCompile Include="main.cpp" />
