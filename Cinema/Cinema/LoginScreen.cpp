@@ -1,4 +1,5 @@
 #include "LoginScreen.h"
+#include <cstring>
 
 void LoginScreen::Init() {
     frameCount = 0;
@@ -27,8 +28,8 @@ void LoginScreen::HandleTextInput(char* buf, int maxLen, int fieldId) {
 }
 
 void LoginScreen::Draw() {
-    DrawText("CINEMA BOOKING SYSTEM",
-        GetScreenWidth() / 2 - MeasureText("CINEMA BOOKING SYSTEM", 40) / 2,
+    DrawText("ADMIN PANEL",
+        GetScreenWidth() / 2 - MeasureText("ADMIN PANEL", 40) / 2,
         80, 40, ORANGE);
 
     DrawText("Login to your account",
@@ -56,6 +57,7 @@ void LoginScreen::Draw() {
 
     loginBtn.Draw();
     signupBtn.Draw();
+    backBtn.Draw();
 }
 
 void LoginScreen::Update(gameStates* state) {
@@ -81,7 +83,7 @@ void LoginScreen::Update(gameStates* state) {
         }
         else if (FileManager::CheckUser(userBuf, passBuf)) {
             loggedInUser = userBuf;
-            *state = MAIN_MENU;
+            *state = ADMIN;
         }
         else {
             showError = true;
@@ -91,5 +93,10 @@ void LoginScreen::Update(gameStates* state) {
 
     if (signupBtn.isClicked()) {
         *state = SIGNUP;
+    }
+
+    if (backBtn.isClicked())
+    {
+        *state = MAIN_MENU;
     }
 }

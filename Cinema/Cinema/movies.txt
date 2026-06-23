@@ -1,0 +1,5 @@
+1,Gladiator II,ACTION,ENGLISH,22-11-2024,A sequel to the legendary Gladiator.
+2,Oppenheimer,DRAMA,ENGLISH,21-07-2023,The story of the atomic bomb.
+3,Talk to Me,HORROR,ENGLISH,28-07-2023,A terrifying supernatural thriller.
+4,The Gorge,SCIFI,ENGLISH,14-02-2025,Two snipers fall in love across a gorge.
+5,Dossier Bulgare,DRAMA,BULGARIAN,01-03-2024,A Bulgarian drama thriller.

@@ -5,7 +5,6 @@
 #include "LoginScreen.h"
 #include "SignupScreen.h"
 #include "MoviesScreen.h"
-#include "ShowsScreen.h"
 #include "BookingScreen.h"
 #include "CompletedScreen.h"
 #include "AdminScreen.h"
@@ -16,13 +15,12 @@ public:
     void Run();
 
 private:
-    gameStates      state = LOGIN;
+    gameStates      state = MAIN_MENU;
     DataManager     db;
     Menu            menu;
     LoginScreen     loginScreen;
     SignupScreen    signupScreen;
     MoviesScreen    moviesScreen;
-    ShowsScreen     showsScreen;
     BookingScreen   bookingScreen;
     CompletedScreen completedScreen;
     AdminScreen     adminScreen;

@@ -155,7 +155,7 @@ void MoviesScreen::Update(gameStates* state) {
         if (CheckCollisionPointRec(GetMousePosition(), card)
             && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             selectedMovieId = filtered[i].id;
-            *state = SHOWS;
+            *state = BOOKING;
         }
     }
 }

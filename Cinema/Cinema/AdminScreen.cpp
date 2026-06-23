@@ -31,29 +31,7 @@ void AdminScreen::DrawMain() {
 
     addMovieBtn.Draw();
     deleteMovieBtn.Draw();
-    addShowBtn.Draw();
-    deleteShowBtn.Draw();
-    updateShowBtn.Draw();
     backBtn.Draw();
-}
-
-void AdminScreen::DrawDeleteMovie() {
-    DrawText("DELETE MOVIE",
-        GetScreenWidth() / 2 - MeasureText("DELETE MOVIE", 36) / 2,
-        20, 36, ORANGE);
-
-    int y = 100;
-    for (auto& m : db->movies) {
-        Rectangle card = { 300, (float)y, 680, 50 };
-        bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
-        DrawRectangleRounded(card, 0.2f, 8, hovered ? Color{ 100,0,0,255 } : Color{ 30,30,30,255 });
-        DrawRectangleRoundedLines(card, 0.2f, 8, hovered ? RED : DARKGRAY);
-        DrawText(m.title.c_str(), 320, y + 14, 22, WHITE);
-        DrawText("Click to delete", 820, y + 14, 18, RED);
-        y += 66;
-    }
-
-    cancelBtn.Draw();
 }
 
 void AdminScreen::DrawAddMovie() {
@@ -101,92 +79,29 @@ void AdminScreen::DrawAddMovie() {
     cancelBtn.Draw();
 }
 
-void AdminScreen::DrawAddShow() {
-    DrawText("ADD SHOW",
-        GetScreenWidth() / 2 - MeasureText("ADD SHOW", 36) / 2,
-        20, 36, ORANGE);
-
-    DrawText("Movie:", 200, 120, 22, WHITE);
-    int mx = 360, my = 112;
-    for (auto& m : db->movies) {
-        Rectangle r = { (float)mx, (float)my, 480, 36 };
-        bool selected = selMovieId == m.id;
-        DrawRectangleRounded(r, 0.2f, 8, selected ? ORANGE : DARKGRAY);
-        DrawText(m.title.c_str(), mx + 10, my + 8, 18, WHITE);
-        my += 46;
-    }
-
-    DrawText("Cinema:", 200, 380, 22, WHITE);
-    int cx = 360, cy = 372;
-    for (auto& c : db->cinemas) {
-        Rectangle r = { (float)cx, (float)cy, 220, 36 };
-        bool selected = selCinemaId == c.id;
-        DrawRectangleRounded(r, 0.2f, 8, selected ? ORANGE : DARKGRAY);
-        DrawText(c.name.c_str(), cx + 10, cy + 8, 18, WHITE);
-        cx += 230;
-    }
-
-    DrawText("Date:", 200, 430, 22, WHITE);
-    Rectangle dateBox = { 360, 422, 200, 36 };
-    DrawRectangleRounded(dateBox, 0.3f, 8, activeShowField == 0 ? DARKGRAY : Color{ 40,40,40,255 });
-    DrawRectangleRoundedLines(dateBox, 0.3f, 8, activeShowField == 0 ? ORANGE : GRAY);
-    DrawText(showDateBuf, 368, 430, 20, WHITE);
-    DrawText("DD-MM-YYYY", 570, 430, 18, GRAY);
-
-    DrawText("Time:", 200, 480, 22, WHITE);
-    Rectangle timeBox = { 360, 472, 120, 36 };
-    DrawRectangleRounded(timeBox, 0.3f, 8, activeShowField == 1 ? DARKGRAY : Color{ 40,40,40,255 });
-    DrawRectangleRoundedLines(timeBox, 0.3f, 8, activeShowField == 1 ? ORANGE : GRAY);
-    DrawText(showTimeBuf, 368, 480, 20, WHITE);
-    DrawText("HH:MM", 490, 480, 18, GRAY);
-
-    confirmAddShow.Draw();
-    cancelBtn.Draw();
-}
-
-void AdminScreen::DrawDeleteShow() {
-    DrawText("DELETE SHOW",
-        GetScreenWidth() / 2 - MeasureText("DELETE SHOW", 36) / 2,
+void AdminScreen::DrawDeleteMovie() {
+    DrawText("DELETE MOVIE",
+        GetScreenWidth() / 2 - MeasureText("DELETE MOVIE", 36) / 2,
         20, 36, ORANGE);
 
     int y = 100;
-    for (auto& s : db->shows) {
-        string movieName = "Unknown";
-        for (auto& m : db->movies)
-            if (m.id == s.movieId) movieName = m.title;
-
-        string cinemaName = "Unknown";
-        for (auto& c : db->cinemas)
-            if (c.id == s.cinemaId) cinemaName = c.name;
-
-        Rectangle card = { 200, (float)y, 880, 50 };
+    for (auto& m : db->movies) {
+        Rectangle card = { 300, (float)y, 680, 50 };
         bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
         DrawRectangleRounded(card, 0.2f, 8, hovered ? Color{ 100,0,0,255 } : Color{ 30,30,30,255 });
         DrawRectangleRoundedLines(card, 0.2f, 8, hovered ? RED : DARKGRAY);
-
-        string info = movieName + "  |  " + cinemaName + "  |  " + s.date + "  " + s.time;
-        DrawText(info.c_str(), 220, y + 14, 18, WHITE);
-        DrawText("Click to delete", 940, y + 14, 18, RED);
+        DrawText(m.title.c_str(), 320, y + 14, 22, WHITE);
+        DrawText("Click to delete", 820, y + 14, 18, RED);
         y += 66;
     }
 
     cancelBtn.Draw();
 }
 
-void AdminScreen::Draw() {
-    if (adminState == AdminState::MAIN)         DrawMain();
-    if (adminState == AdminState::ADD_MOVIE)    DrawAddMovie();
-    if (adminState == AdminState::DELETE_MOVIE) DrawDeleteMovie();
-    if (adminState == AdminState::ADD_SHOW)     DrawAddShow();
-    if (adminState == AdminState::DELETE_SHOW)  DrawDeleteShow();
-}
-
 void AdminScreen::UpdateMain(gameStates* state) {
     if (backBtn.isClicked()) { *state = MAIN_MENU; return; }
     if (addMovieBtn.isClicked()) { adminState = AdminState::ADD_MOVIE;    frameCount = 0; return; }
     if (deleteMovieBtn.isClicked()) { adminState = AdminState::DELETE_MOVIE; frameCount = 0; return; }
-    if (addShowBtn.isClicked()) { adminState = AdminState::ADD_SHOW;     frameCount = 0; return; }
-    if (deleteShowBtn.isClicked()) { adminState = AdminState::DELETE_SHOW;  frameCount = 0; return; }
 }
 
 void AdminScreen::UpdateAddMovie() {
@@ -244,58 +159,10 @@ void AdminScreen::UpdateDeleteMovie() {
     }
 }
 
-void AdminScreen::UpdateAddShow() {
-    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
-
-    int my = 112;
-    for (auto& m : db->movies) {
-        Rectangle r = { 360, (float)my, 480, 36 };
-        if (CheckCollisionPointRec(GetMousePosition(), r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            selMovieId = m.id;
-        my += 46;
-    }
-
-    int cx = 360;
-    for (auto& c : db->cinemas) {
-        Rectangle r = { (float)cx, 372, 220, 36 };
-        if (CheckCollisionPointRec(GetMousePosition(), r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            selCinemaId = c.id;
-        cx += 230;
-    }
-
-    Rectangle dateBox = { 360, 422, 200, 36 };
-    Rectangle timeBox = { 360, 472, 120, 36 };
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        if (CheckCollisionPointRec(GetMousePosition(), dateBox)) activeShowField = 0;
-        else if (CheckCollisionPointRec(GetMousePosition(), timeBox)) activeShowField = 1;
-        else activeShowField = -1;
-    }
-
-    HandleTextInput(showDateBuf, 12, 0);
-    HandleTextInput(showTimeBuf, 8, 1);
-
-    if (confirmAddShow.isClicked() && strlen(showDateBuf) > 0 && strlen(showTimeBuf) > 0) {
-        int newId = db->shows.empty() ? 1 : db->shows.back().id + 1;
-        db->shows.push_back(Show(newId, selMovieId, selHallId, selCinemaId, showTimeBuf, showDateBuf));
-        memset(showDateBuf, 0, sizeof(showDateBuf));
-        memset(showTimeBuf, 0, sizeof(showTimeBuf));
-        adminState = AdminState::MAIN;
-    }
-}
-
-void AdminScreen::UpdateDeleteShow() {
-    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
-
-    int y = 100;
-    for (int i = 0; i < (int)db->shows.size(); i++) {
-        Rectangle card = { 200, (float)y, 880, 50 };
-        if (CheckCollisionPointRec(GetMousePosition(), card)
-            && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-            db->shows.erase(db->shows.begin() + i);
-            return;
-        }
-        y += 66;
-    }
+void AdminScreen::Draw() {
+    if (adminState == AdminState::MAIN)         DrawMain();
+    if (adminState == AdminState::ADD_MOVIE)    DrawAddMovie();
+    if (adminState == AdminState::DELETE_MOVIE) DrawDeleteMovie();
 }
 
 void AdminScreen::Update(gameStates* state) {
@@ -305,6 +172,4 @@ void AdminScreen::Update(gameStates* state) {
     if (adminState == AdminState::MAIN)         UpdateMain(state);
     if (adminState == AdminState::ADD_MOVIE)    UpdateAddMovie();
     if (adminState == AdminState::DELETE_MOVIE) UpdateDeleteMovie();
-    if (adminState == AdminState::ADD_SHOW)     UpdateAddShow();
-    if (adminState == AdminState::DELETE_SHOW)  UpdateDeleteShow();
 }

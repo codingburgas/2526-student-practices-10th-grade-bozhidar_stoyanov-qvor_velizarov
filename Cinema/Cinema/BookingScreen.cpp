@@ -1,34 +1,22 @@
 #include "BookingScreen.h"
 
-void BookingScreen::Init(DataManager* db, int showId) {
+void BookingScreen::Init(DataManager* db, int movieId) {
     this->db = db;
-    this->showId = showId;
+    this->movieId = movieId;
     frameCount = 0;
     selectedSeats.clear();
     totalPrice = 0.0f;
 }
 
-Show* BookingScreen::GetShow() {
-    for (auto& s : db->shows)
-        if (s.id == showId) return &s;
-    return nullptr;
-}
-
 Cinema* BookingScreen::GetCinema() {
-    Show* show = GetShow();
-    if (!show) return nullptr;
-    for (auto& c : db->cinemas)
-        if (c.id == show->cinemaId) return &c;
-    return nullptr;
+    if (db->cinemas.empty()) return nullptr;
+    return &db->cinemas[0];
 }
 
 Hall* BookingScreen::GetHall() {
-    Show* show = GetShow();
     Cinema* cinema = GetCinema();
-    if (!show || !cinema) return nullptr;
-    for (auto& h : cinema->halls)
-        if (h.id == show->hallId) return &h;
-    return nullptr;
+    if (!cinema || cinema->halls.empty()) return nullptr;
+    return &cinema->halls[0];
 }
 
 bool BookingScreen::IsSeatSelected(int row, int col) {
@@ -55,18 +43,16 @@ Color BookingScreen::GetSeatColor(Seat& seat, bool selected) {
 }
 
 void BookingScreen::Draw() {
-    Show* show = GetShow();
     Hall* hall = GetHall();
     Cinema* cinema = GetCinema();
-    if (!show || !hall || !cinema) return;
+    if (!hall || !cinema) return;
 
     DrawText("SELECT YOUR SEATS",
         GetScreenWidth() / 2 - MeasureText("SELECT YOUR SEATS", 36) / 2,
         20, 36, ORANGE);
 
-    string info = cinema->name + "  |  " + show->date + "  |  " + show->time;
-    DrawText(info.c_str(),
-        GetScreenWidth() / 2 - MeasureText(info.c_str(), 20) / 2,
+    DrawText(cinema->name.c_str(),
+        GetScreenWidth() / 2 - MeasureText(cinema->name.c_str(), 20) / 2,
         65, 20, GRAY);
 
     DrawRectangleRounded({ 200, 100, 880, 12 }, 0.5f, 8, DARKGRAY);
@@ -126,7 +112,7 @@ void BookingScreen::Update(gameStates* state) {
     frameCount++;
     if (frameCount < 10) return;
 
-    if (backBtn.isClicked()) { *state = SHOWS; return; }
+    if (backBtn.isClicked()) { *state = MOVIES; return; }
 
     Hall* hall = GetHall();
     if (!hall) return;

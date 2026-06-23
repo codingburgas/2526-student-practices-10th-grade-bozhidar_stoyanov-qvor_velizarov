@@ -11,6 +11,6 @@ void Menu::Draw() {
 
 void Menu::Update(gameStates* state) {
     if (browseBtn.isClicked()) *state = MOVIES;
-    if (adminBtn.isClicked())  *state = ADMIN;
+    if (adminBtn.isClicked())  *state = LOGIN;
     if (exitBtn.isClicked())   *state = EXIT;
 }

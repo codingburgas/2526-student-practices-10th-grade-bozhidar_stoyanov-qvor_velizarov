@@ -5,7 +5,6 @@ enum gameStates {
     SIGNUP,
     MAIN_MENU,
     MOVIES,
-    SHOWS,
     BOOKING,
     COMPLETED,
     ADMIN,

@@ -1,6 +1,8 @@
 #pragma once
 #include "utils.h"
 #include "raylib.h"
+#include <string>
+using namespace std;
 
 class CompletedScreen {
 public:
@@ -11,5 +13,5 @@ public:
 private:
     float progress = 0.0f;
     float timer = 0.0f;
-    bool  done = false;
+    bool done = false;
 };
