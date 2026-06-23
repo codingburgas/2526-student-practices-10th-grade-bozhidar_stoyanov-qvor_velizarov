@@ -164,6 +164,6 @@ void BookingScreen::Update(gameStates* state) {
             hall->seats[s.first][s.second].status = SeatStatus::BOOKED;
         selectedSeats.clear();
         totalPrice = 0.0f;
-        *state = MAIN_MENU;
+        *state = COMPLETED;
     }
 }

@@ -139,6 +139,7 @@ gdi32.lib
     <ClCompile Include="AdminScreen.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="BookingScreen.cpp" />
+    <ClCompile Include="CompletedScreen.cpp" />
     <ClCompile Include="LoginScreen.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Button.cpp" />
@@ -153,6 +154,7 @@ gdi32.lib
     <ClInclude Include="App.h" />
     <ClInclude Include="BookingScreen.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="CompletedScreen.h" />
     <ClInclude Include="LoginScreen.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MoviesScreen.h" />
