@@ -180,3 +180,131 @@ void AdminScreen::Draw() {
     if (adminState == AdminState::ADD_SHOW)     DrawAddShow();
     if (adminState == AdminState::DELETE_SHOW)  DrawDeleteShow();
 }
+
+void AdminScreen::UpdateMain(gameStates* state) {
+    if (backBtn.isClicked()) { *state = MAIN_MENU; return; }
+    if (addMovieBtn.isClicked()) { adminState = AdminState::ADD_MOVIE;    frameCount = 0; return; }
+    if (deleteMovieBtn.isClicked()) { adminState = AdminState::DELETE_MOVIE; frameCount = 0; return; }
+    if (addShowBtn.isClicked()) { adminState = AdminState::ADD_SHOW;     frameCount = 0; return; }
+    if (deleteShowBtn.isClicked()) { adminState = AdminState::DELETE_SHOW;  frameCount = 0; return; }
+}
+
+void AdminScreen::UpdateAddMovie() {
+    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+
+    Rectangle titleBox = { 360, 112, 480, 36 };
+    Rectangle dateBox = { 390, 162, 200, 36 };
+    Rectangle descBox = { 360, 212, 480, 36 };
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(GetMousePosition(), titleBox)) activeField = 0;
+        else if (CheckCollisionPointRec(GetMousePosition(), dateBox))  activeField = 1;
+        else if (CheckCollisionPointRec(GetMousePosition(), descBox))  activeField = 2;
+        else activeField = -1;
+    }
+
+    HandleTextInput(titleBuf, 64, 0);
+    HandleTextInput(dateBuf, 12, 1);
+    HandleTextInput(descBuf, 128, 2);
+
+    for (int i = 0; i < 5; i++) {
+        Rectangle r = { (float)(360 + i * 110), 272, 100, 36 };
+        if (CheckCollisionPointRec(GetMousePosition(), r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            selGenre = (Genre)i;
+    }
+
+    Rectangle engBox = { 360, 322, 120, 36 };
+    Rectangle bulBox = { 490, 322, 120, 36 };
+    if (CheckCollisionPointRec(GetMousePosition(), engBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        selLang = Language::ENGLISH;
+    if (CheckCollisionPointRec(GetMousePosition(), bulBox) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        selLang = Language::BULGARIAN;
+
+    if (confirmAddMovie.isClicked() && strlen(titleBuf) > 0) {
+        int newId = db->movies.empty() ? 1 : db->movies.back().id + 1;
+        db->movies.push_back(Movie(newId, titleBuf, selGenre, selLang, dateBuf, descBuf));
+        memset(titleBuf, 0, sizeof(titleBuf));
+        memset(dateBuf, 0, sizeof(dateBuf));
+        memset(descBuf, 0, sizeof(descBuf));
+        adminState = AdminState::MAIN;
+    }
+}
+
+void AdminScreen::UpdateDeleteMovie() {
+    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+
+    int y = 100;
+    for (int i = 0; i < (int)db->movies.size(); i++) {
+        Rectangle card = { 300, (float)y, 680, 50 };
+        if (CheckCollisionPointRec(GetMousePosition(), card)
+            && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            db->movies.erase(db->movies.begin() + i);
+            return;
+        }
+        y += 66;
+    }
+}
+
+void AdminScreen::UpdateAddShow() {
+    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+
+    int my = 112;
+    for (auto& m : db->movies) {
+        Rectangle r = { 360, (float)my, 480, 36 };
+        if (CheckCollisionPointRec(GetMousePosition(), r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            selMovieId = m.id;
+        my += 46;
+    }
+
+    int cx = 360;
+    for (auto& c : db->cinemas) {
+        Rectangle r = { (float)cx, 372, 220, 36 };
+        if (CheckCollisionPointRec(GetMousePosition(), r) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            selCinemaId = c.id;
+        cx += 230;
+    }
+
+    Rectangle dateBox = { 360, 422, 200, 36 };
+    Rectangle timeBox = { 360, 472, 120, 36 };
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (CheckCollisionPointRec(GetMousePosition(), dateBox)) activeShowField = 0;
+        else if (CheckCollisionPointRec(GetMousePosition(), timeBox)) activeShowField = 1;
+        else activeShowField = -1;
+    }
+
+    HandleTextInput(showDateBuf, 12, 0);
+    HandleTextInput(showTimeBuf, 8, 1);
+
+    if (confirmAddShow.isClicked() && strlen(showDateBuf) > 0 && strlen(showTimeBuf) > 0) {
+        int newId = db->shows.empty() ? 1 : db->shows.back().id + 1;
+        db->shows.push_back(Show(newId, selMovieId, selHallId, selCinemaId, showTimeBuf, showDateBuf));
+        memset(showDateBuf, 0, sizeof(showDateBuf));
+        memset(showTimeBuf, 0, sizeof(showTimeBuf));
+        adminState = AdminState::MAIN;
+    }
+}
+
+void AdminScreen::UpdateDeleteShow() {
+    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+
+    int y = 100;
+    for (int i = 0; i < (int)db->shows.size(); i++) {
+        Rectangle card = { 200, (float)y, 880, 50 };
+        if (CheckCollisionPointRec(GetMousePosition(), card)
+            && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+            db->shows.erase(db->shows.begin() + i);
+            return;
+        }
+        y += 66;
+    }
+}
+
+void AdminScreen::Update(gameStates* state) {
+    frameCount++;
+    if (frameCount < 10) return;
+
+    if (adminState == AdminState::MAIN)         UpdateMain(state);
+    if (adminState == AdminState::ADD_MOVIE)    UpdateAddMovie();
+    if (adminState == AdminState::DELETE_MOVIE) UpdateDeleteMovie();
+    if (adminState == AdminState::ADD_SHOW)     UpdateAddShow();
+    if (adminState == AdminState::DELETE_SHOW)  UpdateDeleteShow();
+}
