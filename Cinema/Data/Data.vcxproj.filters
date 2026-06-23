@@ -30,9 +30,6 @@
     <ClInclude Include="Hall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Show.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Cinema.h">
       <Filter>Header Files</Filter>
     </ClInclude>

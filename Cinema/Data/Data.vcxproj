@@ -142,7 +142,6 @@
     <ClInclude Include="Movie.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Seat.h" />
-    <ClInclude Include="Show.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Data.cpp" />

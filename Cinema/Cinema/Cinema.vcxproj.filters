@@ -30,12 +30,6 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShowsScreen.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Showscreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BookingScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

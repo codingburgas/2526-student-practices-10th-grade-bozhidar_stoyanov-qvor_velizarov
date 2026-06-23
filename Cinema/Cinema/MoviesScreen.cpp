@@ -52,12 +52,12 @@ void MoviesScreen::Draw() {
         20, 40, ORANGE);
 
     DrawText("Search:", 20, 88, 22, WHITE);
-    Rectangle searchBox = { 90, 80, 100, 36 };
+    Rectangle searchBox = { 135, 80, 160, 36 };
     DrawRectangleRounded(searchBox, 0.3f, 8,
         searchActive ? DARKGRAY : Color{ 40,40,40,255 });
     DrawRectangleRoundedLines(searchBox, 0.3f, 8,
         searchActive ? ORANGE : GRAY);
-    DrawText(searchBuf, 98, 88, 20, WHITE);
+    DrawText(searchBuf, 145, 92, 20, WHITE);
 
     filterAction.Draw();
     filterComedy.Draw();
@@ -111,7 +111,7 @@ void MoviesScreen::Update(gameStates* state) {
 
     if (backBtn.isClicked()) { *state = MAIN_MENU; return; }
 
-    Rectangle searchBox = { 90, 80, 100, 36 };
+    Rectangle searchBox = { 135, 80, 160, 36 };
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         searchActive = CheckCollisionPointRec(GetMousePosition(), searchBox);
 
@@ -145,7 +145,7 @@ void MoviesScreen::Update(gameStates* state) {
     }
 
     vector<Movie> filtered = GetFiltered();
-    int cardX = 40, cardY = 140, cardW = 370, cardH = 110, cols = 3;
+    int cardX = 40, cardY = 160, cardW = 370, cardH = 110, cols = 3;
     for (int i = 0; i < (int)filtered.size(); i++) {
         int col = i % cols;
         int row = i / cols;

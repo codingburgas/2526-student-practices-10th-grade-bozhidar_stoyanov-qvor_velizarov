@@ -25,7 +25,7 @@ private:
 
     Cinema* GetCinema();
     Hall* GetHall();
-    Color GetSeatColor(Seat& seat, bool selected);
-    bool IsSeatSelected(int row, int col);
-    void RecalcTotal();
+    Color   GetSeatColor(Seat& seat, bool selected);
+    bool    IsSeatSelected(int row, int col);
+    void    RecalcTotal();
 };
