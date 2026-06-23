@@ -146,6 +146,7 @@ gdi32.lib
     <ClCompile Include="MoviesScreen.cpp" />
     <ClCompile Include="Showscreen.cpp" />
     <ClCompile Include="ShowsScreen.h" />
+    <ClCompile Include="SignupScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdminScreen.h" />
@@ -155,6 +156,7 @@ gdi32.lib
     <ClInclude Include="LoginScreen.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MoviesScreen.h" />
+    <ClInclude Include="SignupScreen.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
