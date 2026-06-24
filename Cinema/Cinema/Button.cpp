@@ -25,3 +25,8 @@ bool Button::isClicked() {
     return CheckCollisionPointRec(GetMousePosition(), button)
         && IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
+
+void Button::SetColor(Color newColor)
+{
+    color = newColor;
+}

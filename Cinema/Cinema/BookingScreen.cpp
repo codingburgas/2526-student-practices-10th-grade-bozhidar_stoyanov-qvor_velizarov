@@ -25,6 +25,14 @@ bool BookingScreen::IsSeatSelected(int row, int col) {
     return false;
 }
 
+bool BookingScreen::IsSeatBooked(int row, int col) {
+    for (auto& s : bookedSeats) {
+        if (s.movieId == movieId && s.row == row && s.col == col)
+            return true;
+    }
+    return false;
+}
+
 void BookingScreen::RecalcTotal() {
     Hall* hall = GetHall();
     if (!hall) return;
@@ -34,7 +42,6 @@ void BookingScreen::RecalcTotal() {
 }
 
 Color BookingScreen::GetSeatColor(Seat& seat, bool selected) {
-    if (seat.status == SeatStatus::BOOKED) return RED;
     if (selected)                          return ORANGE;
     if (seat.type == SeatType::STANDARD)   return Color{ 160,160,160,255 };
     if (seat.type == SeatType::VIP)        return Color{ 180,140,0,255 };
@@ -60,22 +67,36 @@ void BookingScreen::Draw() {
         GetScreenWidth() / 2 - MeasureText("SCREEN", 16) / 2,
         118, 16, GRAY);
 
-    int startX = 160, startY = 150, seatW = 52, seatH = 46, gap = 8;
+    int seatW = 52;
+    int seatH = 46;
+    int gap = 8;
+
+    int gridW = COLS * seatW + (COLS - 1) * gap;
+    int startX = GetScreenWidth() / 2 - gridW / 2;
+    int startY = 180;
 
     for (int r = 0; r < ROWS; r++) {
-        DrawText(TextFormat("%d", r + 1), startX - 30, startY + r * (seatH + gap) + 12, 20, GRAY);
+        DrawText(TextFormat("%d", r + 1),
+            startX - 30,
+            startY + r * (seatH + gap) + 12,
+            20,
+            GRAY);
 
         for (int c = 0; c < COLS; c++) {
             int x = startX + c * (seatW + gap);
             int y = startY + r * (seatH + gap);
 
             Seat& seat = hall->seats[r][c];
+
             bool selected = IsSeatSelected(r, c);
-            Color color = GetSeatColor(seat, selected);
+            bool booked = IsSeatBooked(r, c);
+
+            Color color = booked ? RED : GetSeatColor(seat, selected);
 
             Rectangle seatRect = { (float)x, (float)y, (float)seatW, (float)seatH };
+
             bool hovered = CheckCollisionPointRec(GetMousePosition(), seatRect)
-                && seat.status != SeatStatus::BOOKED;
+                && !booked;
 
             DrawRectangleRounded(seatRect, 0.3f, 8,
                 hovered && !selected
@@ -85,24 +106,38 @@ void BookingScreen::Draw() {
             : color);
 
             if (r == 0)
-                DrawText(TextFormat("%d", c + 1), x + 16, startY - 22, 16, GRAY);
+                DrawText(TextFormat("%d", c + 1),
+                    x + 16,
+                    startY - 22,
+                    16,
+                    GRAY);
         }
     }
 
-    int lx = 160, ly = 480;
+    int lx = GetScreenWidth() / 2 - 260;
+    int ly = 510;
+
     DrawRectangleRounded({ (float)lx,       (float)ly,      30, 24 }, 0.3f, 8, Color{ 160,160,160,255 });
     DrawText("Standard - 8 lv", lx + 38, ly + 2, 18, LIGHTGRAY);
+
     DrawRectangleRounded({ (float)lx,       (float)ly + 32, 30, 24 }, 0.3f, 8, Color{ 180,140,0,255 });
     DrawText("VIP - 12 lv", lx + 38, ly + 34, 18, LIGHTGRAY);
+
     DrawRectangleRounded({ (float)lx,       (float)ly + 64, 30, 24 }, 0.3f, 8, Color{ 100,0,180,255 });
     DrawText("Platinum - 18 lv", lx + 38, ly + 66, 18, LIGHTGRAY);
-    DrawRectangleRounded({ (float)lx + 220, (float)ly,      30, 24 }, 0.3f, 8, ORANGE);
-    DrawText("Selected", lx + 258, ly + 2, 18, LIGHTGRAY);
-    DrawRectangleRounded({ (float)lx + 220, (float)ly + 32, 30, 24 }, 0.3f, 8, RED);
-    DrawText("Booked", lx + 258, ly + 34, 18, LIGHTGRAY);
+
+    DrawRectangleRounded({ (float)lx + 330, (float)ly,      30, 24 }, 0.3f, 8, ORANGE);
+    DrawText("Selected", lx + 368, ly + 2, 18, LIGHTGRAY);
+
+    DrawRectangleRounded({ (float)lx + 330, (float)ly + 32, 30, 24 }, 0.3f, 8, RED);
+    DrawText("Booked", lx + 368, ly + 34, 18, LIGHTGRAY);
 
     string total = "Total: " + to_string((int)totalPrice) + " lv";
-    DrawText(total.c_str(), 900, 560, 28, ORANGE);
+    DrawText(total.c_str(),
+        GetScreenWidth() / 2 - MeasureText(total.c_str(), 28) / 2,
+        640,
+        28,
+        ORANGE);
 
     if (!selectedSeats.empty()) confirmBtn.Draw();
     backBtn.Draw();
@@ -117,17 +152,25 @@ void BookingScreen::Update(gameStates* state) {
     Hall* hall = GetHall();
     if (!hall) return;
 
-    int startX = 160, startY = 150, seatW = 52, seatH = 46, gap = 8;
+    int seatW = 52;
+    int seatH = 46;
+    int gap = 8;
+
+    int gridW = COLS * seatW + (COLS - 1) * gap;
+    int startX = GetScreenWidth() / 2 - gridW / 2;
+    int startY = 180;
 
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {
             Seat& seat = hall->seats[r][c];
-            if (seat.status == SeatStatus::BOOKED) continue;
+
+            if (IsSeatBooked(r, c)) continue;
 
             Rectangle seatRect = {
                 (float)(startX + c * (seatW + gap)),
                 (float)(startY + r * (seatH + gap)),
-                (float)seatW, (float)seatH
+                (float)seatW,
+                (float)seatH
             };
 
             if (CheckCollisionPointRec(GetMousePosition(), seatRect)
@@ -140,14 +183,17 @@ void BookingScreen::Update(gameStates* state) {
                 else {
                     selectedSeats.push_back({ r, c });
                 }
+
                 RecalcTotal();
             }
         }
     }
 
     if (!selectedSeats.empty() && confirmBtn.isClicked()) {
-        for (auto& s : selectedSeats)
-            hall->seats[s.first][s.second].status = SeatStatus::BOOKED;
+        for (auto& s : selectedSeats) {
+            bookedSeats.push_back(MovieBookedSeat(movieId, s.first, s.second));
+        }
+
         selectedSeats.clear();
         totalPrice = 0.0f;
         *state = COMPLETED;

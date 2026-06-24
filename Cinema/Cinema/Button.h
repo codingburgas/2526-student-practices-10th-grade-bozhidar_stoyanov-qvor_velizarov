@@ -7,6 +7,7 @@ public:
         const char* text, Color color = ORANGE, Color textColor = WHITE);
     void Draw();
     bool isClicked();
+    void SetColor(Color newColor);
 private:
     Rectangle button;
     const char* text;

@@ -11,19 +11,7 @@ public:
     vector<Cinema> cinemas;
 
     void Init() {
-        vector<Movie> loaded = FileManager::LoadMovies();
-        if (!loaded.empty())
-            movies = loaded;
-        else {
-            movies = {
-                Movie(1, "Gladiator II",    Genre::ACTION, Language::ENGLISH,   "22-11-2024", "A sequel to the legendary Gladiator."),
-                Movie(2, "Oppenheimer",     Genre::DRAMA,  Language::ENGLISH,   "21-07-2023", "The story of the atomic bomb."),
-                Movie(3, "Talk to Me",      Genre::HORROR, Language::ENGLISH,   "28-07-2023", "A terrifying supernatural thriller."),
-                Movie(4, "The Gorge",       Genre::SCIFI,  Language::ENGLISH,   "14-02-2025", "Two snipers fall in love across a gorge."),
-                Movie(5, "Dossier Bulgare", Genre::DRAMA,  Language::BULGARIAN, "01-03-2024", "A Bulgarian drama thriller."),
-            };
-            FileManager::SaveMovies(movies);
-        }
+        movies = FileManager::LoadMovies();
 
         Cinema c1(1, "CineGrand", "Sofia");
         Hall h1; h1.id = 1; h1.name = "Hall A"; h1.Init();

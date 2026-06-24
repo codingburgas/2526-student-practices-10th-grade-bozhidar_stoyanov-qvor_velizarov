@@ -59,6 +59,19 @@ void MoviesScreen::Draw() {
         searchActive ? ORANGE : GRAY);
     DrawText(searchBuf, 145, 92, 20, WHITE);
 
+
+    filterAction.SetColor(filterGenre == Genre::ACTION ? ORANGE : DARKGRAY);
+    filterComedy.SetColor(filterGenre == Genre::COMEDY ? ORANGE : DARKGRAY);
+    filterDrama.SetColor(filterGenre == Genre::DRAMA ? ORANGE : DARKGRAY);
+    filterHorror.SetColor(filterGenre == Genre::HORROR ? ORANGE : DARKGRAY);
+    filterScifi.SetColor(filterGenre == Genre::SCIFI ? ORANGE : DARKGRAY);
+
+    filterEng.SetColor(filterLang == Language::ENGLISH ? ORANGE : DARKGRAY);
+    filterBul.SetColor(filterLang == Language::BULGARIAN ? ORANGE : DARKGRAY);
+
+    clearFilter.SetColor(RED);
+
+
     filterAction.Draw();
     filterComedy.Draw();
     filterDrama.Draw();
