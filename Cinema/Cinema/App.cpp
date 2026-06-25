@@ -3,7 +3,6 @@
 void App::Run() {
     db.Init();
     loginScreen.Init();
-    signupScreen.Init();
     moviesScreen.Init(&db);
     adminScreen.Init(&db);
 
@@ -11,7 +10,6 @@ void App::Run() {
         gameStates prevState = state;
 
         if (state == LOGIN)     loginScreen.Update(&state);
-        if (state == SIGNUP)    signupScreen.Update(&state);
         if (state == MAIN_MENU) menu.Update(&state);
         if (state == MOVIES)    moviesScreen.Update(&state);
         if (state == BOOKING)   bookingScreen.Update(&state);
@@ -20,12 +18,10 @@ void App::Run() {
 
         if (prevState != LOGIN && state == LOGIN)
             loginScreen.Init();
-        if (prevState != SIGNUP && state == SIGNUP)
-            signupScreen.Init();
         if (prevState != MOVIES && state == MOVIES)
             moviesScreen.Init(&db);
         if (prevState != BOOKING && state == BOOKING)
-            bookingScreen.Init(&db, moviesScreen.selectedMovieId);
+            bookingScreen.Init(&db, moviesScreen.selectedMovieId, moviesScreen.selectedCinemaId);
         if (prevState != COMPLETED && state == COMPLETED)
             completedScreen.Init();
         if (prevState != ADMIN && state == ADMIN)
@@ -34,7 +30,6 @@ void App::Run() {
         BeginDrawing();
         ClearBackground(BLACK);
         if (state == LOGIN)     loginScreen.Draw();
-        if (state == SIGNUP)    signupScreen.Draw();
         if (state == MAIN_MENU) menu.Draw();
         if (state == MOVIES)    moviesScreen.Draw();
         if (state == BOOKING)   bookingScreen.Draw();

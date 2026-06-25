@@ -3,6 +3,23 @@
 void MoviesScreen::Init(DataManager* db) {
     this->db = db;
     frameCount = 0;
+
+    textures.clear();
+
+    for (auto& m : db->movies) {
+        string path = m.imagePath;
+
+        Texture2D tex = LoadTexture(path.c_str());
+
+        if (tex.id == 0) {
+            path = "../" + m.imagePath;
+            tex = LoadTexture(path.c_str());
+        }
+
+        if (tex.id != 0) {
+            textures[m.id] = tex;
+        }
+    }
 }
 
 vector<Movie> MoviesScreen::GetFiltered() {
@@ -59,7 +76,6 @@ void MoviesScreen::Draw() {
         searchActive ? ORANGE : GRAY);
     DrawText(searchBuf, 145, 92, 20, WHITE);
 
-
     filterAction.SetColor(filterGenre == Genre::ACTION ? ORANGE : DARKGRAY);
     filterComedy.SetColor(filterGenre == Genre::COMEDY ? ORANGE : DARKGRAY);
     filterDrama.SetColor(filterGenre == Genre::DRAMA ? ORANGE : DARKGRAY);
@@ -70,7 +86,6 @@ void MoviesScreen::Draw() {
     filterBul.SetColor(filterLang == Language::BULGARIAN ? ORANGE : DARKGRAY);
 
     clearFilter.SetColor(RED);
-
 
     filterAction.Draw();
     filterComedy.Draw();
@@ -104,15 +119,24 @@ void MoviesScreen::Draw() {
         DrawRectangleRoundedLines(card, 0.15f, 8,
             hovered ? ORANGE : DARKGRAY);
 
-        DrawText(filtered[i].title.c_str(), x + 14, y + 12, 22, ORANGE);
-        DrawText(filtered[i].releaseDate.c_str(), x + 14, y + 40, 18, LIGHTGRAY);
+        if (textures.count(filtered[i].id)) {
+            Texture2D tex = textures[filtered[i].id];
+
+            Rectangle src = { 0, 0, (float)tex.width, (float)tex.height };
+            Rectangle dest = { (float)x + 8, (float)y + 8, 90, 94 };
+
+            DrawTexturePro(tex, src, dest, { 0, 0 }, 0, WHITE);
+        }
+
+        DrawText(filtered[i].title.c_str(), x + 110, y + 12, 22, ORANGE);
+        DrawText(filtered[i].releaseDate.c_str(), x + 110, y + 40, 18, LIGHTGRAY);
 
         string info = GenreToStr(filtered[i].genre) + "  |  " + LangToStr(filtered[i].language);
-        DrawText(info.c_str(), x + 14, y + 64, 18, GRAY);
+        DrawText(info.c_str(), x + 110, y + 64, 18, GRAY);
 
         string desc = filtered[i].description;
-        if (desc.size() > 45) desc = desc.substr(0, 45) + "...";
-        DrawText(desc.c_str(), x + 14, y + 86, 16, LIGHTGRAY);
+        if (desc.size() > 35) desc = desc.substr(0, 35) + "...";
+        DrawText(desc.c_str(), x + 110, y + 86, 16, LIGHTGRAY);
     }
 
     backBtn.Draw();
@@ -144,13 +168,20 @@ void MoviesScreen::Update(gameStates* state) {
         }
     }
 
-    if (filterAction.isClicked()) filterGenre = Genre::ACTION;
-    if (filterComedy.isClicked()) filterGenre = Genre::COMEDY;
-    if (filterDrama.isClicked())  filterGenre = Genre::DRAMA;
-    if (filterHorror.isClicked()) filterGenre = Genre::HORROR;
-    if (filterScifi.isClicked())  filterGenre = Genre::SCIFI;
-    if (filterEng.isClicked())    filterLang = Language::ENGLISH;
-    if (filterBul.isClicked())    filterLang = Language::BULGARIAN;
+    if (filterAction.isClicked())
+        filterGenre = (filterGenre == Genre::ACTION) ? (Genre)-1 : Genre::ACTION;
+    if (filterComedy.isClicked())
+        filterGenre = (filterGenre == Genre::COMEDY) ? (Genre)-1 : Genre::COMEDY;
+    if (filterDrama.isClicked())
+        filterGenre = (filterGenre == Genre::DRAMA) ? (Genre)-1 : Genre::DRAMA;
+    if (filterHorror.isClicked())
+        filterGenre = (filterGenre == Genre::HORROR) ? (Genre)-1 : Genre::HORROR;
+    if (filterScifi.isClicked())
+        filterGenre = (filterGenre == Genre::SCIFI) ? (Genre)-1 : Genre::SCIFI;
+    if (filterEng.isClicked())
+        filterLang = (filterLang == Language::ENGLISH) ? (Language)-1 : Language::ENGLISH;
+    if (filterBul.isClicked())
+        filterLang = (filterLang == Language::BULGARIAN) ? (Language)-1 : Language::BULGARIAN;
     if (clearFilter.isClicked()) {
         filterGenre = (Genre)-1;
         filterLang = (Language)-1;
@@ -158,13 +189,15 @@ void MoviesScreen::Update(gameStates* state) {
     }
 
     vector<Movie> filtered = GetFiltered();
-    int cardX = 40, cardY = 160, cardW = 370, cardH = 110, cols = 3;
+    int cardX = 40, cardY = 140, cardW = 370, cardH = 110, cols = 3;
+
     for (int i = 0; i < (int)filtered.size(); i++) {
         int col = i % cols;
         int row = i / cols;
         int x = cardX + col * (cardW + 20);
         int y = cardY + row * (cardH + 16);
         Rectangle card = { (float)x, (float)y, (float)cardW, (float)cardH };
+
         if (CheckCollisionPointRec(GetMousePosition(), card)
             && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             selectedMovieId = filtered[i].id;

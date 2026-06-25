@@ -1,8 +1,8 @@
 #include "Menu.h"
 
 void Menu::Draw() {
-    DrawText("CINEMA",
-        GetScreenWidth() / 2 - MeasureText("CINEMA", 60) / 2,
+    DrawText("CINEMA CITY",
+        GetScreenWidth() / 2 - MeasureText("CINEMA CITY", 60) / 2,
         100, 60, ORANGE);
     browseBtn.Draw();
     adminBtn.Draw();

@@ -32,10 +32,6 @@ void LoginScreen::Draw() {
         GetScreenWidth() / 2 - MeasureText("ADMIN PANEL", 40) / 2,
         80, 40, ORANGE);
 
-    DrawText("Login to your account",
-        GetScreenWidth() / 2 - MeasureText("Login to your account", 22) / 2,
-        130, 22, GRAY);
-
     DrawText("Username:", 340, 222, 22, WHITE);
     Rectangle userBox = { 340, 250, 600, 44 };
     DrawRectangleRounded(userBox, 0.3f, 8, activeField == 0 ? DARKGRAY : Color{ 40,40,40,255 });
@@ -56,7 +52,6 @@ void LoginScreen::Draw() {
             540, 20, RED);
 
     loginBtn.Draw();
-    signupBtn.Draw();
     backBtn.Draw();
 }
 
@@ -89,10 +84,6 @@ void LoginScreen::Update(gameStates* state) {
             showError = true;
             errorMsg = "Wrong username or password.";
         }
-    }
-
-    if (signupBtn.isClicked()) {
-        *state = SIGNUP;
     }
 
     if (backBtn.isClicked())

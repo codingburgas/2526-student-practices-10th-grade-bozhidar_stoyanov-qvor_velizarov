@@ -23,15 +23,17 @@ public:
     Language language;
     string releaseDate;
     string description;
+    string imagePath;
 
     Movie() {}
     Movie(int id, string title, Genre genre, Language language,
-        string releaseDate, string description) {
+        string releaseDate, string description, string imagePath = "") {
         this->id = id;
         this->title = title;
         this->genre = genre;
         this->language = language;
         this->releaseDate = releaseDate;
         this->description = description;
+        this->imagePath = imagePath;
     }
 };

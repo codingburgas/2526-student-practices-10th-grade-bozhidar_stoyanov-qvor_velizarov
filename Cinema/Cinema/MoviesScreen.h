@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "..\Data\DataManager.h"
 #include <string>
+#include <map>
 using namespace std;
 
 class MoviesScreen {
@@ -12,10 +13,13 @@ public:
     void Update(gameStates* state);
 
     int selectedMovieId = -1;
+    int selectedCinemaId = 1;
 
 private:
     DataManager* db;
     int frameCount = 0;
+
+    map<int, Texture2D> textures;
 
     Button backBtn = Button(20, 20, 120, 45, "< Back", DARKGRAY);
     Button filterAction = Button(320, 80, 100, 36, "Action", DARKGRAY);
@@ -30,7 +34,7 @@ private:
     char searchBuf[64] = {};
     bool searchActive = false;
 
-    Genre    filterGenre = (Genre)-1;
+    Genre filterGenre = (Genre)-1;
     Language filterLang = (Language)-1;
 
     vector<Movie> GetFiltered();

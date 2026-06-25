@@ -4,8 +4,8 @@
 #include <sstream>
 using namespace std;
 
-string FileManager::usersFile = "users.txt";
-string FileManager::moviesFile = "movies.txt";
+string FileManager::usersFile = "../Resources/users.txt";
+string FileManager::moviesFile = "../Resources/movies.txt";
 
 string FileManager::GenreToStr(Genre g) {
     switch (g) {
@@ -46,7 +46,7 @@ bool FileManager::UserExists(string username) {
     while (getline(file, line)) {
         istringstream ss(line);
         string user, pass;
-        getline(ss, user, ',');
+        getline(ss, user, '|');
         if (user == username) return true;
     }
     return false;
@@ -55,7 +55,7 @@ bool FileManager::UserExists(string username) {
 bool FileManager::SaveUser(string username, string password) {
     if (UserExists(username)) return false;
     ofstream file(usersFile, ios::app);
-    file << username << "," << password << "\n";
+    file << username << "|" << password << "\n";
     return true;
 }
 
@@ -65,8 +65,8 @@ bool FileManager::CheckUser(string username, string password) {
     while (getline(file, line)) {
         istringstream ss(line);
         string user, pass;
-        getline(ss, user, ',');
-        getline(ss, pass, ',');
+        getline(ss, user, '|');
+        getline(ss, pass, '|');
         if (user == username && pass == password) return true;
     }
     return false;
@@ -74,13 +74,15 @@ bool FileManager::CheckUser(string username, string password) {
 
 void FileManager::SaveMovies(vector<Movie>& movies) {
     ofstream file(moviesFile);
+
     for (auto& m : movies) {
-        file << m.id << ","
-            << m.title << ","
-            << GenreToStr(m.genre) << ","
-            << LangToStr(m.language) << ","
-            << m.releaseDate << ","
-            << m.description << "\n";
+        file << m.id << "|"
+            << m.title << "|"
+            << GenreToStr(m.genre) << "|"
+            << LangToStr(m.language) << "|"
+            << m.releaseDate << "|"
+            << m.description << "|"
+            << m.imagePath << "\n";
     }
 }
 
@@ -92,17 +94,31 @@ vector<Movie> FileManager::LoadMovies() {
     string line;
     while (getline(file, line)) {
         istringstream ss(line);
-        string idStr, title, genre, lang, date, desc;
-        getline(ss, idStr, ',');
-        getline(ss, title, ',');
-        getline(ss, genre, ',');
-        getline(ss, lang, ',');
-        getline(ss, date, ',');
-        getline(ss, desc, ',');
+
+        string idStr, title, genre, lang, date, desc, imagePath;
+
+        getline(ss, idStr, '|');
+        getline(ss, title, '|');
+        getline(ss, genre, '|');
+        getline(ss, lang, '|');
+        getline(ss, date, '|');
+        getline(ss, desc, '|');
+        getline(ss, imagePath);
 
         if (idStr.empty()) continue;
-        Movie m(stoi(idStr), title, StrToGenre(genre), StrToLang(lang), date, desc);
+
+        Movie m(
+            stoi(idStr),
+            title,
+            StrToGenre(genre),
+            StrToLang(lang),
+            date,
+            desc,
+            imagePath
+        );
+
         movies.push_back(m);
     }
+
     return movies;
 }

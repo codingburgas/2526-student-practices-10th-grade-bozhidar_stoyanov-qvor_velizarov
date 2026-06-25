@@ -23,7 +23,6 @@ private:
     char passBuf[32] = {};
 
     Button loginBtn = Button(440, 400, 400, 55, "Login", ORANGE);
-    Button signupBtn = Button(440, 470, 400, 55, "Sign Up", DARKGRAY);
     Button backBtn = Button(20, 20, 120, 45, "< Back", DARKGRAY);
 
     void HandleTextInput(char* buf, int maxLen, int fieldId);
