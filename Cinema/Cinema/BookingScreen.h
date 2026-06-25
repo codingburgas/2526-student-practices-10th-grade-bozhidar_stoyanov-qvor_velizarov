@@ -41,14 +41,14 @@ private:
     Button backBtn = Button(20, 20, 120, 45, "< Back", DARKGRAY);
     Button confirmBtn = Button(820, 600, 350, 50, "Confirm Booking", ORANGE);
 
-    // Cinema selector buttons (repositioned for right panel)
     Button cineGrandBtn = Button(820, 515, 160, 40, "CineGrand", DARKGRAY);
     Button arenaBtn     = Button(1000, 515, 160, 40, "Arena Cinema", DARKGRAY);
 
     Cinema* GetCinema();
     Hall* GetHall();
-    Color GetSeatColor(Seat& seat, bool selected);
+    Color GetSeatColor(Seat& seat, bool selected, bool bookedByUser = false);
     bool IsSeatSelected(int row, int col);
     bool IsSeatBooked(int row, int col);
+    bool IsSeatBookedByUser(int row, int col);
     void RecalcTotal();
 };
