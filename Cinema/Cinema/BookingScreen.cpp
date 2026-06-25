@@ -1,4 +1,5 @@
 #include "BookingScreen.h"
+using namespace std;
 
 void BookingScreen::Init(DataManager* db, int movieId, int cinemaId) {
     this->db = db;
@@ -58,38 +59,60 @@ Color BookingScreen::GetSeatColor(Seat& seat, bool selected, bool bookedByUser) 
     if (bookedByUser)                     return Color{ 0, 121, 241, 255 };
     if (selected)                         return YELLOW;
     if (seat.type == SeatType::STANDARD)  return Color{ 160,160,160,255 };
-    if (seat.type == SeatType::VIP)       return Color{ 180,140,0,255 };
-    if (seat.type == SeatType::PLATINUM)  return Color{ 100,0,180,255 };
+    if (seat.type == SeatType::VIP)       return Color{ 220,160,0,255 };
+    if (seat.type == SeatType::PLATINUM)  return Color{ 140,40,200,255 };
     return GRAY;
 }
 
+string GetMovieShowtime(int movieId) {
+    switch(movieId) {
+        case 1: return "18:00";
+        case 2: return "20:30";
+        case 3: return "16:45";
+        case 4: return "21:00";
+        case 5: return "19:15";
+        default: return "19:30";
+    }
+}
+
+string GetMovieDate(int movieId) {
+    switch(movieId) {
+        case 1: return "20 Nov 2024";
+        case 2: return "22 Nov 2024";
+        case 3: return "24 Nov 2024";
+        case 4: return "25 Nov 2024";
+        case 5: return "26 Nov 2024";
+        default: return "22 Nov 2024";
+    }
+}
+                        
 void BookingScreen::Draw() {
     Hall* hall = GetHall();
     Cinema* cinema = GetCinema();
     if (!hall || !cinema) return;
 
     DrawText("SELECT YOUR SEATS",
-        GetScreenWidth() / 2 - MeasureText("SELECT YOUR SEATS", 36) / 2,
-        20, 36, ORANGE);
+        GetScreenWidth() / 2 - MeasureText("SELECT YOUR SEATS", 40) / 2,
+        30, 40, ORANGE);
 
-    int seatW = 52;
-    int seatH = 46;
-    int gap = 8;
+    int seatW = 48;
+    int seatH = 42;
+    int gap = 6;
 
     int gridW = COLS * seatW + (COLS - 1) * gap;
-    int startX = 60;  
-    int startY = 180;
+    int startX = 100;  
+    int startY = 190;
 
-    DrawRectangleRounded({ (float)startX - 10, 100, 750, 12 }, 0.5f, 8, DARKGRAY);
+    DrawRectangleRounded({ (float)startX - 10, 125, (float)gridW + 20, 30 }, 0.4f, 8, DARKGRAY);
     DrawText("SCREEN",
         startX + gridW / 2 - MeasureText("SCREEN", 16) / 2,
-        118, 16, GRAY);
+        133, 16, GRAY);
 
     for (int r = 0; r < ROWS; r++) {
         DrawText(TextFormat("%d", r + 1),
-            startX - 30,
-            startY + r * (seatH + gap) + 12,
-            20,
+            startX - 35,
+            startY + r * (seatH + gap) + 8,
+            18,
             GRAY);
 
         for (int c = 0; c < COLS; c++) {
@@ -113,39 +136,39 @@ void BookingScreen::Draw() {
             bool hovered = CheckCollisionPointRec(GetMousePosition(), seatRect)
                 && !booked;
 
-            DrawRectangleRounded(seatRect, 0.3f, 8,
-                hovered && !selected
+            DrawRectangleRounded(seatRect, 0.2f, 4,
+                hovered && !selected && !booked
                 ? Color{ (unsigned char)min(color.r + 40, 255),
                          (unsigned char)min(color.g + 40, 255),
                          (unsigned char)min(color.b + 40, 255), 255 }
             : color);
 
-            if (r == 0)
-                DrawText(TextFormat("%d", c + 1),
-                    x + 16,
-                    startY - 22,
-                    16,
+            if (r == 0)                     DrawText(TextFormat("%d", c + 1),
+                    x + 14,
+                    startY - 28,
+                    14,
                     GRAY);
         }
     }
 
-    std::string total = "Total: " + std::to_string((int)totalPrice) + " lv";
-    DrawText(total.c_str(),
-        startX + gridW / 2 - MeasureText(total.c_str(), 28) / 2,
-        startY + ROWS * (seatH + gap) + 20,
-        28,
-        ORANGE);
+    int panelX = 720;
+    int panelY = 125;
+    int panelW = 360;
+    int panelH = 530;
 
-    int rightX = 820;
-    int rightY = 150;
-    int rightW = 360;
-    int rightH = 520;
+    DrawRectangleRounded({ (float)panelX - 10, (float)panelY - 10, (float)panelW + 20, (float)panelH + 20 }, 
+        0.2f, 8, Color{ 30, 30, 30, 220 });
+    DrawRectangleRoundedLines({ (float)panelX - 10, (float)panelY - 10, (float)panelW + 20, (float)panelH + 20 }, 
+        0.2f, 8, ORANGE);
 
-    DrawRectangleRounded({ (float)rightX - 15, (float)rightY - 15, (float)rightW + 30, (float)rightH + 30 }, 0.3f, 8,
-        Color{ 30, 30, 30, 200 });
-    DrawRectangleRoundedLines({ (float)rightX - 15, (float)rightY - 15, (float)rightW + 30, (float)rightH + 30 }, 0.3f, 8, ORANGE);
+    DrawText("YOUR SELECTION",
+        panelX + panelW / 2 - MeasureText("YOUR SELECTION", 20) / 2,
+        panelY + 15, 20, ORANGE);
 
-    std::string movieTitle = "Unknown";
+    int infoY = panelY + 55;
+    int lineH = 48;
+
+    string movieTitle = "Unknown";
     for (auto& m : db->movies) {
         if (m.id == movieId) {
             movieTitle = m.title;
@@ -153,45 +176,91 @@ void BookingScreen::Draw() {
         }
     }
 
-    DrawText(movieTitle.c_str(),
-        rightX + rightW / 2 - MeasureText(movieTitle.c_str(), 28) / 2,
-        rightY, 28, ORANGE);
+    DrawText("MOVIE", panelX + 20, infoY, 14, ORANGE);
+    DrawText(movieTitle.c_str(), panelX + 170, infoY + 2, 14, LIGHTGRAY);
 
-    DrawText("SEAT LEGEND",
-        rightX + rightW / 2 - MeasureText("SEAT LEGEND", 28) / 2,
-        rightY, 28, ORANGE);
+    DrawText("DATE", panelX + 20, infoY + lineH, 14, ORANGE);
+    string movieDate = GetMovieDate(movieId);
+    DrawText(movieDate.c_str(), panelX + 170, infoY + lineH + 2, 14, LIGHTGRAY);
 
-    int legY = rightY + 50;
-    int legItemH = 40;
+    DrawText("TIME", panelX + 20, infoY + lineH * 2, 14, ORANGE);
+    DrawText("19:30", panelX + 170, infoY + lineH * 2 + 2, 14, LIGHTGRAY);
 
-    DrawRectangleRounded({ (float)rightX, (float)legY, 24, 24 }, 0.2f, 4, Color{ 160,160,160,255 });
-    DrawText(cinemaId == 2 ? "Standard - 12 lv" : "Standard - 8 lv", rightX + 40, legY + 2, 22, LIGHTGRAY);
+    DrawText("SEATS", panelX + 20, infoY + lineH * 3, 14, ORANGE);
+    string seatsText = selectedSeats.empty() ? "None selected" : to_string(selectedSeats.size()) + " selected";
+    DrawText(seatsText.c_str(), panelX + 170, infoY + lineH * 3 + 2, 14, LIGHTGRAY);
 
-    DrawRectangleRounded({ (float)rightX, (float)legY + legItemH, 24, 24 }, 0.2f, 4, Color{ 180,140,0,255 });
-    DrawText(cinemaId == 2 ? "VIP - 18 lv" : "VIP - 12 lv", rightX + 40, legY + legItemH + 2, 22, LIGHTGRAY);
+    DrawText("TOTAL", panelX + 20, infoY + lineH * 4, 14, ORANGE);
+    string totalStr = to_string((int)totalPrice) + " lv";
+    DrawText(totalStr.c_str(),
+        panelX + 165,
+        infoY + lineH * 4 + 2, 14, LIGHTGRAY);
 
-    DrawRectangleRounded({ (float)rightX, (float)legY + legItemH * 2, 24, 24 }, 0.2f, 4, Color{ 100,0,180,255 });
-    DrawText(cinemaId == 2 ? "Platinum - 25 lv" : "Platinum - 18 lv", rightX + 40, legY + legItemH * 2 + 2, 22, LIGHTGRAY);
+    DrawLineEx(Vector2{ (float)panelX + 15, (float)infoY + lineH * 4 + 28 }, 
+        Vector2{ (float)panelX + panelW - 15, (float)infoY + lineH * 4 + 28 }, 
+        1.0f, Color{ 80, 80, 80, 100 });
 
-    DrawRectangleRounded({ (float)rightX, (float)legY + legItemH * 3, 24, 24 }, 0.2f, 4, YELLOW);
-    DrawText("Selected", rightX + 40, legY + legItemH * 3 + 2, 22, LIGHTGRAY);
+    int legY = infoY + lineH * 4 + 48;  
+    int legBoxSize = 14;
+    int legBoxX = panelX + 20;
+    int legTextX = legBoxX + 26;
+    int legSpacing = 24;
+    int colWidth = 170;
 
-    DrawRectangleRounded({ (float)rightX, (float)legY + legItemH * 4, 24, 24 }, 0.2f, 4, Color{ 0, 121, 241, 255 });
-    DrawText("Your Reservation", rightX + 40, legY + legItemH * 4 + 2, 22, LIGHTGRAY);
+    DrawRectangleRounded({ (float)legBoxX, (float)legY, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, Color{ 160,160,160,255 });
+    DrawText("Standard", legTextX, legY - 2, 12, LIGHTGRAY);
+    string standardPrice = to_string((int)Seat().GetPrice(cinemaId)) + " lv";
+    DrawText(standardPrice.c_str(), panelX + 105, legY - 2, 12, ORANGE);
 
-    DrawRectangleRounded({ (float)rightX, (float)legY + legItemH * 5, 24, 24 }, 0.2f, 4, GREEN);
-    DrawText("Booked", rightX + 40, legY + legItemH * 5 + 2, 22, LIGHTGRAY);
+    DrawRectangleRounded({ (float)(legBoxX + colWidth), (float)legY, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, YELLOW);
+    DrawText("Selected", legTextX + colWidth, legY - 2, 12, ORANGE);
+
+    DrawRectangleRounded({ (float)legBoxX, (float)legY + legSpacing, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, Color{ 220,160,0,255 });
+    DrawText("VIP", legTextX, legY + legSpacing - 2, 12, LIGHTGRAY);
+    Seat vipSeat;
+    vipSeat.type = SeatType::VIP;
+    string vipPrice = to_string((int)vipSeat.GetPrice(cinemaId)) + " lv";
+    DrawText(vipPrice.c_str(), panelX + 105, legY + legSpacing - 2, 12, ORANGE);
+
+    DrawRectangleRounded({ (float)(legBoxX + colWidth), (float)legY + legSpacing, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, Color{ 0, 121, 241, 255 });
+    DrawText("Your Reservation", legTextX + colWidth, legY + legSpacing - 2, 12, LIGHTGRAY);
+
+    DrawRectangleRounded({ (float)legBoxX, (float)legY + legSpacing * 2, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, Color{ 140,40,200,255 });
+    DrawText("Platinum", legTextX, legY + legSpacing * 2 - 2, 12, LIGHTGRAY);
+    Seat platinumSeat;
+    platinumSeat.type = SeatType::PLATINUM;
+    string platinumPrice = to_string((int)platinumSeat.GetPrice(cinemaId)) + " lv";
+    DrawText(platinumPrice.c_str(), panelX + 105, legY + legSpacing * 2 - 2, 12, ORANGE);
+
+    DrawRectangleRounded({ (float)(legBoxX + colWidth), (float)legY + legSpacing * 2, (float)legBoxSize, (float)legBoxSize }, 0.1f, 2, GREEN);
+    DrawText("Booked", legTextX + colWidth, legY + legSpacing * 2 - 2, 12, LIGHTGRAY);
 
     DrawText("SELECT CINEMA",
-        rightX + rightW / 2 - MeasureText("SELECT CINEMA", 24) / 2,
-        legY + legItemH * 5 + 20, 24, ORANGE);
+        panelX + panelW / 2 - MeasureText("SELECT CINEMA", 13) / 2,
+        legY + legSpacing * 3 + 12, 13, ORANGE);
+
+    cineGrandBtn = Button(panelX + 20, legY + legSpacing * 3 + 35, 160, 35, "CineGrand", DARKGRAY);
+    arenaBtn = Button(panelX + 190, legY + legSpacing * 3 + 35, 160, 35, "NovaCine", DARKGRAY);
 
     cineGrandBtn.SetColor(cinemaId == 1 ? ORANGE : DARKGRAY);
     arenaBtn.SetColor(cinemaId == 2 ? ORANGE : DARKGRAY);
     cineGrandBtn.Draw();
     arenaBtn.Draw();
 
+    confirmBtn = Button(panelX + 20, panelY + panelH - 55, panelW - 40, 45, "Confirm Booking", ORANGE);
     if (!selectedSeats.empty()) confirmBtn.Draw();
+
+    string bottomTotal = "TOTAL: " + to_string((int)totalPrice) + " lv";
+    DrawText(bottomTotal.c_str(),
+        startX + gridW / 2 - MeasureText(bottomTotal.c_str(), 20) / 2,
+        startY + ROWS * (seatH + gap) + 40,
+        20,
+        ORANGE);
+
+    DrawText("Click on a seat to select it.",
+        50, GetScreenHeight() - 35, 12, GRAY);
+    DrawText("Selected seats will be held for 5 minutes.",
+        GetScreenWidth() - 380, GetScreenHeight() - 35, 12, GRAY);
 
     backBtn.Draw();
 }
@@ -220,12 +289,12 @@ void BookingScreen::Update(gameStates* state) {
     Hall* hall = GetHall();
     if (!hall) return;
 
-    int seatW = 52;
-    int seatH = 46;
-    int gap = 8;
+    int seatW = 48;
+    int seatH = 42;
+    int gap = 6;
 
-    int startX = 60;
-    int startY = 180;
+    int startX = 100;
+    int startY = 190;
 
     for (int r = 0; r < ROWS; r++) {
         for (int c = 0; c < COLS; c++) {

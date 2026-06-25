@@ -1,0 +1,12 @@
+1|Gladiator II|0|0|22-11-2024|A legendary Roman sequel.|Resources/assets/gladiator.png
+2|Oppenheimer|2|0|21-07-2023|The father of the atomic bomb.|Resources/assets/oppenheimer.png
+3|Talk to Me|3|0|28-07-2023|A terrifying horror story.|Resources/assets/talktome.png
+4|The Gorge|4|0|14-02-2025|Love across a deadly gorge.|Resources/assets/gorge.png
+5|Dossier Bulgare|2|1|01-03-2024|A Bulgarian crime drama.|Resources/assets/dossier.png
+6|Inception|4|0|16-07-2010|Dreams hide dangerous secrets.|Resources/assets/inception.png
+7|Avatar|4|0|18-12-2009|Adventure on Pandora.|Resources/assets/avatar.png
+8|Joker|2|0|04-10-2019|A villain's origin story.|Resources/assets/joker.png
+9|Moana|1|0|23-11-2016|A journey across the ocean.|Resources/assets/moana.png
+10|Shrek|1|0|18-05-2001|An ogre's funny adventure.|Resources/assets/shrek.png
+11|Titanic|2|0|19-12-1997|Love aboard the Titanic.|Resources/assets/titanic.png
+12|asdfasdf|2|0|12-10-200|asdada|

@@ -46,4 +46,5 @@ private:
     void UpdateDeleteMovie();
 
     void HandleTextInput(char* buf, int maxLen, int fieldId);
+    void SaveMoviesToFile();
 };

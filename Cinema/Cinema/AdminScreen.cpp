@@ -1,10 +1,15 @@
 #include "AdminScreen.h"
+#include <fstream>
+#include <sstream>
+using namespace std;
 
 void AdminScreen::Init(DataManager* db) {
     this->db = db;
     adminState = AdminState::MAIN;
     frameCount = 0;
     selectedId = -1;
+    selGenre = Genre::ACTION;
+    selLang = Language::ENGLISH;
 }
 
 void AdminScreen::HandleTextInput(char* buf, int maxLen, int fieldId) {
@@ -22,6 +27,25 @@ void AdminScreen::HandleTextInput(char* buf, int maxLen, int fieldId) {
         int len = strlen(buf);
         if (len > 0) buf[len - 1] = '\0';
     }
+}
+
+void AdminScreen::SaveMoviesToFile() {
+    ofstream file("../Resources/movies.txt");
+    if (!file.is_open()) {
+        file.open("movies.txt");
+        if (!file.is_open()) return;
+    }
+    
+    for (auto& m : db->movies) {
+        file << m.id << "|"
+             << m.title << "|"
+             << (int)m.genre << "|"
+             << (int)m.language << "|"
+             << m.releaseDate << "|"
+             << m.description << "|"
+             << m.imagePath << "\n";
+    }
+    file.close();
 }
 
 void AdminScreen::DrawMain() {
@@ -64,6 +88,7 @@ void AdminScreen::DrawAddMovie() {
         Rectangle r = { (float)(360 + i * 110), 272, 100, 36 };
         bool selected = (int)selGenre == i;
         DrawRectangleRounded(r, 0.3f, 8, selected ? ORANGE : DARKGRAY);
+        DrawRectangleRoundedLines(r, 0.3f, 8, selected ? ORANGE : GRAY);
         DrawText(genres[i], (int)(370 + i * 110), 280, 18, WHITE);
     }
 
@@ -71,7 +96,9 @@ void AdminScreen::DrawAddMovie() {
     Rectangle engBox = { 360, 322, 120, 36 };
     Rectangle bulBox = { 490, 322, 120, 36 };
     DrawRectangleRounded(engBox, 0.3f, 8, selLang == Language::ENGLISH ? ORANGE : DARKGRAY);
+    DrawRectangleRoundedLines(engBox, 0.3f, 8, selLang == Language::ENGLISH ? ORANGE : GRAY);
     DrawRectangleRounded(bulBox, 0.3f, 8, selLang == Language::BULGARIAN ? ORANGE : DARKGRAY);
+    DrawRectangleRoundedLines(bulBox, 0.3f, 8, selLang == Language::BULGARIAN ? ORANGE : GRAY);
     DrawText("English", 368, 330, 18, WHITE);
     DrawText("Bulgarian", 498, 330, 18, WHITE);
 
@@ -84,15 +111,34 @@ void AdminScreen::DrawDeleteMovie() {
         GetScreenWidth() / 2 - MeasureText("DELETE MOVIE", 36) / 2,
         20, 36, ORANGE);
 
-    int y = 100;
-    for (auto& m : db->movies) {
-        Rectangle card = { 300, (float)y, 680, 50 };
-        bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
-        DrawRectangleRounded(card, 0.2f, 8, hovered ? Color{ 100,0,0,255 } : Color{ 30,30,30,255 });
-        DrawRectangleRoundedLines(card, 0.2f, 8, hovered ? RED : DARKGRAY);
-        DrawText(m.title.c_str(), 320, y + 14, 22, WHITE);
-        DrawText("Click to delete", 820, y + 14, 18, RED);
-        y += 66;
+    if (db->movies.empty()) {
+        DrawText("No movies to delete", GetScreenWidth() / 2 - MeasureText("No movies to delete", 24) / 2,
+            GetScreenHeight() / 2, 24, GRAY);
+    } else {
+        int cardW = 420;
+        int cardH = 80;
+        int cardSpacingX = 50;
+        int cardSpacingY = 20;
+        int startX = 40;
+        int startY = 100;
+        int cols = 2;
+
+        for (int i = 0; i < (int)db->movies.size(); i++) {
+            int col = i % cols;
+            int row = i / cols;
+            int x = startX + col * (cardW + cardSpacingX);
+            int y = startY + row * (cardH + cardSpacingY);
+
+            Rectangle card = { (float)x, (float)y, (float)cardW, (float)cardH };
+            bool hovered = CheckCollisionPointRec(GetMousePosition(), card);
+            
+            DrawRectangleRounded(card, 0.2f, 8, hovered ? Color{ 100, 0, 0, 255 } : Color{ 30, 30, 30, 255 });
+            DrawRectangleRoundedLines(card, 0.2f, 8, hovered ? RED : DARKGRAY);
+            
+            DrawText(db->movies[i].title.c_str(), x + 15, y + 15, 20, WHITE);
+            DrawText(db->movies[i].releaseDate.c_str(), x + 15, y + 45, 16, LIGHTGRAY);
+            DrawText("Click to delete", x + 280, y + 30, 16, RED);
+        }
     }
 
     cancelBtn.Draw();
@@ -100,20 +146,41 @@ void AdminScreen::DrawDeleteMovie() {
 
 void AdminScreen::UpdateMain(gameStates* state) {
     if (backBtn.isClicked()) { *state = MAIN_MENU; return; }
-    if (addMovieBtn.isClicked()) { adminState = AdminState::ADD_MOVIE;    frameCount = 0; return; }
-    if (deleteMovieBtn.isClicked()) { adminState = AdminState::DELETE_MOVIE; frameCount = 0; return; }
+    if (addMovieBtn.isClicked()) { 
+        adminState = AdminState::ADD_MOVIE;
+        frameCount = 0;
+        memset(titleBuf, 0, sizeof(titleBuf));
+        memset(dateBuf, 0, sizeof(dateBuf));
+        memset(descBuf, 0, sizeof(descBuf));
+        activeField = -1;
+        selGenre = Genre::ACTION;
+        selLang = Language::ENGLISH;
+        return; 
+    }
+    if (deleteMovieBtn.isClicked()) { 
+        adminState = AdminState::DELETE_MOVIE; 
+        frameCount = 0;
+        return; 
+    }
 }
 
 void AdminScreen::UpdateAddMovie() {
-    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+    if (cancelBtn.isClicked()) { 
+        adminState = AdminState::MAIN;
+        memset(titleBuf, 0, sizeof(titleBuf));
+        memset(dateBuf, 0, sizeof(dateBuf));
+        memset(descBuf, 0, sizeof(descBuf));
+        activeField = -1;
+        return; 
+    }
 
     Rectangle titleBox = { 360, 112, 480, 36 };
     Rectangle dateBox = { 390, 162, 200, 36 };
     Rectangle descBox = { 360, 212, 480, 36 };
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         if (CheckCollisionPointRec(GetMousePosition(), titleBox)) activeField = 0;
-        else if (CheckCollisionPointRec(GetMousePosition(), dateBox))  activeField = 1;
-        else if (CheckCollisionPointRec(GetMousePosition(), descBox))  activeField = 2;
+        else if (CheckCollisionPointRec(GetMousePosition(), dateBox)) activeField = 1;
+        else if (CheckCollisionPointRec(GetMousePosition(), descBox)) activeField = 2;
         else activeField = -1;
     }
 
@@ -136,26 +203,49 @@ void AdminScreen::UpdateAddMovie() {
 
     if (confirmAddMovie.isClicked() && strlen(titleBuf) > 0) {
         int newId = db->movies.empty() ? 1 : db->movies.back().id + 1;
-        db->movies.push_back(Movie(newId, titleBuf, selGenre, selLang, dateBuf, descBuf));
+        db->movies.push_back(Movie(newId, titleBuf, selGenre, selLang, dateBuf, descBuf, ""));
+        
+        SaveMoviesToFile();
+        
         memset(titleBuf, 0, sizeof(titleBuf));
         memset(dateBuf, 0, sizeof(dateBuf));
         memset(descBuf, 0, sizeof(descBuf));
+        activeField = -1;
+        selGenre = Genre::ACTION;
+        selLang = Language::ENGLISH;
+        
         adminState = AdminState::MAIN;
     }
 }
 
 void AdminScreen::UpdateDeleteMovie() {
-    if (cancelBtn.isClicked()) { adminState = AdminState::MAIN; return; }
+    if (cancelBtn.isClicked()) { 
+        adminState = AdminState::MAIN; 
+        return; 
+    }
 
-    int y = 100;
+    int cardW = 420;
+    int cardH = 80;
+    int cardSpacingX = 50;
+    int cardSpacingY = 20;
+    int startX = 40;
+    int startY = 100;
+    int cols = 2;
+
     for (int i = 0; i < (int)db->movies.size(); i++) {
-        Rectangle card = { 300, (float)y, 680, 50 };
+        int col = i % cols;
+        int row = i / cols;
+        int x = startX + col * (cardW + cardSpacingX);
+        int y = startY + row * (cardH + cardSpacingY);
+
+        Rectangle card = { (float)x, (float)y, (float)cardW, (float)cardH };
         if (CheckCollisionPointRec(GetMousePosition(), card)
             && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
             db->movies.erase(db->movies.begin() + i);
+            SaveMoviesToFile();
+            adminState = AdminState::MAIN;
             return;
         }
-        y += 66;
     }
 }
 
